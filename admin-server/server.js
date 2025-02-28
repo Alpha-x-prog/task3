@@ -1,4 +1,3 @@
-// admin-server/server.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -6,6 +5,7 @@ const app = express();
 const PORT = 8080;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../admin.html')));
 
 const filePath = path.join(__dirname, '../product-server/products.json');
 
@@ -44,4 +44,9 @@ app.delete('/api/products/:id', (req, res) => {
     res.status(204).send();
 });
 
-app.listen(PORT, () => console.log(`Admin server running at http://localhost:${PORT}`));
+// Страница админ-панели
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/admin.html'));
+});
+
+app.listen(PORT, () => console.log(`Admin server running at http://localhost:${PORT}/admin`));
