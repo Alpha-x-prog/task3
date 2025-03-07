@@ -47,5 +47,14 @@
     "categories": [
       "Аксессуары"
     ]
+  },
+  {
+    "id": 6,
+    "name": "urus",
+    "price": "999999",
+    "description": "минус",
+    "categories": [
+      "Автомобиль"
+    ]
   }
 ]

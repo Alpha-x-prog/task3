@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Каталог товаров</title>
@@ -9,6 +9,16 @@
     <div class="container">
         <h1 class="text-center mb-4">Каталог товаров</h1>
 
+        <!-- Выбор типа данных -->
+        <div class="mb-4 text-center">
+            <label for="dataSelection" class="form-label">Выберите, какие данные загружать:</label>
+            <select id="dataSelection" class="form-select w-50 mx-auto" onchange="loadProducts()">
+                <option value="basic" selected>Название + Цена</option>
+                <option value="desc">Название + Описание</option>
+                <option value="full">Полная информация</option>
+            </select>
+        </div>
+
         <!-- Блок кнопок категорий -->
         <div id="categories" class="mb-4 text-center"></div>
 
@@ -16,13 +26,35 @@
         <div id="products" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
     </div>
 
+    <h1>Чат поддержки</h1>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Введите сообщение">
+    <button onclick="sendMessage()">Отправить</button>
+
     <script>
         let allProducts = [];
         let selectedCategory = null;
 
         async function loadProducts() {
-            const response = await fetch('/products');
-            allProducts = await response.json();
+            const selection = document.getElementById('dataSelection').value;
+            let query = "";
+
+            if (selection === "basic") {
+                query = `{ products { name price } }`;
+            } else if (selection === "desc") {
+                query = `{ products { name description } }`;
+            } else {
+                query = `{ products { name price description categories } }`;
+            }
+
+            const response = await fetch('/graphql', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
+
+            const data = await response.json();
+            allProducts = data.data.products;
             renderCategories();
             renderProducts();
         }
@@ -30,9 +62,11 @@
         function renderCategories() {
             const categoriesContainer = document.getElementById('categories');
             const categories = new Set();
-            
+
             allProducts.forEach(product => {
-                product.categories.forEach(category => categories.add(category));
+                if (product.categories) {
+                    product.categories.forEach(category => categories.add(category));
+                }
             });
 
             categoriesContainer.innerHTML = `
@@ -48,7 +82,7 @@
             container.innerHTML = '';
 
             const filteredProducts = selectedCategory 
-                ? allProducts.filter(product => product.categories.includes(selectedCategory))
+                ? allProducts.filter(product => product.categories && product.categories.includes(selectedCategory))
                 : allProducts;
 
             if (filteredProducts.length === 0) {
@@ -62,9 +96,9 @@
                         <div class="card h-100 shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">${product.name}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${product.price} ₽</h6>
-                                <p class="card-text">${product.description}</p>
-                                <p><strong>Категории:</strong> ${product.categories.join(', ')}</p>
+                                ${product.price !== undefined ? `<h6 class="card-subtitle mb-2 text-muted">${product.price} ₽</h6>` : ""}
+                                ${product.description ? `<p class="card-text">${product.description}</p>` : ""}
+                                ${product.categories ? `<p><strong>Категории:</strong> ${product.categories.join(', ')}</p>` : ""}
                             </div>
                         </div>
                     </div>`;
@@ -76,6 +110,27 @@
             renderProducts();
         }
 
+            // WebSocket Чат
+ 
+        const ws = new WebSocket('ws://localhost:8080');
+        const userId = 'customer1';
+        const adminId = 'admin';
+        
+        ws.onopen = () => {
+            ws.send(JSON.stringify({ type: 'init', userId, role: 'customer' }));
+        };
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById('chat').innerHTML += `<p><b>${data.from}:</b> ${data.message}</p>`;
+        };
+        
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            ws.send(JSON.stringify({ type: 'message', userId, to: adminId, message }));
+            document.getElementById('message').value = '';
+        }
+        
         loadProducts();
     </script>
 </body>

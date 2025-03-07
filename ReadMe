@@ -13,7 +13,7 @@
 cd product-server && npm install && node server.js
 # В новом терминале
 cd ../admin-server && npm install && node server.js
-3. 🔗 Открываем в браузере:
+3. 🔗 Открываем в браузере:git 
 
 Каталог: http://localhost:3000
 Админ-панель доступна через API: http://localhost:8080/api/products

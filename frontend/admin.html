@@ -47,6 +47,38 @@
             <tbody id="productTableBody"></tbody>
         </table>
     </div>
+    <h1>Чат с клиентами</h1>
+    <div id="chat"></div>
+    <input type="text" id="to" placeholder="ID клиента">
+    <input type="text" id="message" placeholder="Введите сообщение">
+    <button onclick="sendMessage()">Отправить</button>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const userId = 'admin';
+        
+        ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'init', userId, role: 'admin' }));
+        ws.send(JSON.stringify({ type: 'getClients' }));
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'clients') {
+                document.getElementById('chat').innerHTML += `<p><b>Активные клиенты:</b> ${data.clients.join(', ')}</p>`;
+            } else {
+                document.getElementById('chat').innerHTML += `<p><b>${data.from}:</b> ${data.message}</p>`;
+            }
+        };
+
+        
+        function sendMessage() {
+            const to = document.getElementById('to').value;
+            const message = document.getElementById('message').value;
+            ws.send(JSON.stringify({ type: 'message', userId, to, message }));
+            document.getElementById('message').value = '';
+        }
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', fetchProducts);
