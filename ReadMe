@@ -1,5 +1,5 @@
 Запуск проекта с помощью docker:
-  docker-compose up --build   
+  `docker-compose up --build`
 
 Запуск проекта с помощью node.js
 
