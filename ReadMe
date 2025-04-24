@@ -2,9 +2,7 @@
   ```bash
   docker-compose up --build   
   ```
-  ```bash
-  node server.js
-  ```
+
 Запуск проекта с помощью node.js
 
 Для запуска проекта необходимо запустить три сервера в отдельных терминалах (или окнах командной строки):
@@ -14,14 +12,11 @@
   cd \online-store\admin-server
   Запустите сервер:
   node server.js
-
-
 2. Запуск сервера каталога товаров:
    Перейдите в директорию product-server:
    cd online-store\product-server
    Запустите сервер:
    node server.js
-
 3. Запуск WebSocket-сервера чата:
    Перейдите в директорию product-server:
    cd online-store\product-server
