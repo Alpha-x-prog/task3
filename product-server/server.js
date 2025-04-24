@@ -5,14 +5,14 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3002;
 
 // Раздаем статические файлы (index.html)
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Загружаем товары из JSON
 const getProducts = () => {
-    const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
+    const data = fs.readFileSync(path.join(__dirname, '../data/products.json'), 'utf-8');
     return JSON.parse(data);
 };
 

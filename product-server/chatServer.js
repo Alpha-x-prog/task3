@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 const fs = require('fs');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 3003 });
 
 // Хранилище подключений
 const clients = new Map();
@@ -57,4 +57,4 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+console.log('WebSocket server is running on ws://localhost:3003');

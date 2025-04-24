@@ -2,12 +2,12 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = 8081;
+const PORT = 3001;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../admin.html')));
 
-const filePath = path.join(__dirname, '../product-server/products.json');
+const filePath = path.join(__dirname, '../data/products.json');
 
 // Получить все товары
 app.get('/api/products', (req, res) => {
