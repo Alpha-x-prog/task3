@@ -1,4 +1,10 @@
 Запуск проекта с помощью docker:
+`пример`
+```python
+print("Hello, World!")
+
+```javascript
+console.log('Hello, world!');
   `docker-compose up --build`
 
 Запуск проекта с помощью node.js
